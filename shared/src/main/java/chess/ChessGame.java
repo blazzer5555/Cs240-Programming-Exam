@@ -73,13 +73,15 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        List<Collection> allPossibleMoves = new ArrayList<>();
+        Collection[] allPossibleMoves = new Collection[32];
+        int arrayIndex = 0;
         for (int row = 0; row< 8; row++) {
             for (int col = 0; col < 8; col++) {
                 ChessPosition position = new ChessPosition(row + 1, col + 1);
                 if (board.getPiece(position) != null) {
                     if (board.getPiece(position).getTeamColor() != teamColor) {
-                        allPossibleMoves.add(board.getPiece(position).pieceMoves(board, position));
+                        allPossibleMoves[arrayIndex] = board.getPiece(position).pieceMoves(board, position);
+                        arrayIndex++;
                     }
                 }
             }
@@ -87,7 +89,7 @@ public class ChessGame {
         ChessPosition kingPosition = getKingPosition(teamColor);
         for (Collection<ChessMove> piece: allPossibleMoves) {
             for (ChessMove move: piece) {
-                if (move.getEndPosition() == kingPosition) {
+                if (move.getEndPosition().getRow() == kingPosition.getRow() & move.getEndPosition().getColumn() == kingPosition.getColumn()) {
                     return true;
                 }
             }
