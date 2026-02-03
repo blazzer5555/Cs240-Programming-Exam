@@ -73,21 +73,15 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection[] allPossibleMoves = new Collection[32];
-        int arrayIndex = 0;
-        for (int row = 0; row< 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                ChessPosition position = new ChessPosition(row + 1, col + 1);
-                if (board.getPiece(position) != null) {
-                    if (board.getPiece(position).getTeamColor() != teamColor) {
-                        allPossibleMoves[arrayIndex] = board.getPiece(position).pieceMoves(board, position);
-                        arrayIndex++;
-                    }
-                }
-            }
+        Collection[] allPossibleEnemyMoves;
+        if (teamColor == TeamColor.WHITE) {
+            allPossibleEnemyMoves = getAllPossibleMoves(TeamColor.BLACK);
+        }
+        else {
+            allPossibleEnemyMoves = getAllPossibleMoves(TeamColor.WHITE);
         }
         ChessPosition kingPosition = getKingPosition(teamColor);
-        for (Collection<ChessMove> piece: allPossibleMoves) {
+        for (Collection<ChessMove> piece: allPossibleEnemyMoves) {
             for (ChessMove move: piece) {
                 if (move.getEndPosition().getRow() == kingPosition.getRow() & move.getEndPosition().getColumn() == kingPosition.getColumn()) {
                     return true;
@@ -95,6 +89,24 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+
+    private Collection[] getAllPossibleMoves(TeamColor team) {
+        Collection[] allPossibleMoves = new Collection[32];
+        int arrayIndex = 0;
+        for (int row = 0; row< 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPosition position = new ChessPosition(row + 1, col + 1);
+                if (board.getPiece(position) != null) {
+                    if (board.getPiece(position).getTeamColor() == team) {
+                        allPossibleMoves[arrayIndex] = board.getPiece(position).pieceMoves(board, position);
+                        arrayIndex++;
+                    }
+                }
+            }
+        }
+        return allPossibleMoves;
     }
 
 
