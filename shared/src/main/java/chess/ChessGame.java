@@ -61,8 +61,8 @@ public class ChessGame {
             return null;
         }
         Collection<ChessMove> movesOfPiece = pieceToMove.pieceMoves(board, startPosition);
-        List<ChessMove> validMovesOfPiece = new ArrayList<>();
-        if (!isInCheck(pieceToMove.getTeamColor())) {
+        if (isInCheck(pieceToMove.getTeamColor())) {
+            List<ChessMove> validMovesOfPiece = new ArrayList<>();
             for (ChessMove move : movesOfPiece) {
                 ChessBoard newBoard = board.deepCopy();
                 ChessBoard oldBoard = board.deepCopy();
@@ -74,8 +74,9 @@ public class ChessGame {
                 }
                 board = oldBoard.deepCopy();
             }
+            return validMovesOfPiece;
         }
-        return validMovesOfPiece;
+        return movesOfPiece;
     }
 
     /**
@@ -85,6 +86,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        // PROMOTE PAWNS
         ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
         if (pieceToMove == null) {
             throw new InvalidMoveException("There is no piece at that location");
@@ -171,7 +173,24 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) {
+            Collection<ChessMove> allPossibleMoves = getAllPossibleMoves(teamColor);
+            for (ChessMove move : allPossibleMoves) {
+                ChessBoard newBoard = board.deepCopy();
+                ChessBoard oldBoard = board.deepCopy();
+                ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
+                newBoard.addPiece(move.getEndPosition(), pieceToMove);
+                newBoard.addPiece(move.getStartPosition(), null);
+                board = newBoard.deepCopy();
+                if (!isInCheck(pieceToMove.getTeamColor())) {
+                    board = oldBoard.deepCopy();
+                    return false;
+                }
+                board = oldBoard.deepCopy();
+            }
+            return true;
+        }
+            return false;
     }
 
     /**
