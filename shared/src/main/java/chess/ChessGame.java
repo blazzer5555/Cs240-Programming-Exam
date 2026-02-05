@@ -53,7 +53,27 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (board.getPiece(startPosition) == null) {
+            return null;
+        }
+        ChessPiece pieceToMove = board.getPiece(startPosition);
+        if (pieceToMove.getTeamColor() != player_turn) {
+            return null;
+        }
+        Collection<ChessMove> movesOfPiece = pieceToMove.pieceMoves(board, startPosition);
+        List<ChessMove> validMovesOfPiece = new ArrayList<>();
+        for (ChessMove move: movesOfPiece) {
+            ChessBoard newBoard = board.deepCopy();
+            ChessBoard oldBoard = board.deepCopy();
+            newBoard.addPiece(move.getEndPosition(), pieceToMove);
+            newBoard.addPiece(move.getStartPosition(), null);
+            board = newBoard.deepCopy();
+            if (!isInCheck(pieceToMove.getTeamColor())) {
+                validMovesOfPiece.add(move);
+            }
+            board = oldBoard.deepCopy();
+        }
+        return validMovesOfPiece;
     }
 
     /**
@@ -90,7 +110,6 @@ public class ChessGame {
         }
         return false;
     }
-
 
     private Collection[] getAllPossibleMoves(TeamColor team) {
         Collection[] allPossibleMoves = new Collection[32];
