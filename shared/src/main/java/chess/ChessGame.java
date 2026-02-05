@@ -99,7 +99,13 @@ public class ChessGame {
             if (potentialMove.getStartPosition().getRow() == move.getStartPosition().getRow() & potentialMove.getStartPosition().getColumn() == move.getStartPosition().getColumn() &
                     potentialMove.getEndPosition().getRow() == move.getEndPosition().getRow() & potentialMove.getEndPosition().getColumn() == move.getEndPosition().getColumn() &
                     potentialMove.getPromotionPiece() == move.getPromotionPiece()) {
-                board.addPiece(move.getEndPosition(), pieceToMove);
+                if (move.getPromotionPiece() != null) {
+                    ChessPiece promotedPiece = new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece());
+                    board.addPiece(move.getEndPosition(), promotedPiece);
+                }
+                else {
+                    board.addPiece(move.getEndPosition(), pieceToMove);
+                }
                 board.addPiece(move.getStartPosition(), null);
                 if (player_turn == TeamColor.WHITE) {
                     player_turn = TeamColor.BLACK;
