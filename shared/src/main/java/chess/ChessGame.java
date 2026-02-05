@@ -90,9 +90,7 @@ public class ChessGame {
         }
         Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
         for (ChessMove potentialMove: possibleMoves) {
-            if (potentialMove.getStartPosition().getRow() == move.getStartPosition().getRow() & potentialMove.getStartPosition().getColumn() == move.getStartPosition().getColumn() &
-                    potentialMove.getEndPosition().getRow() == move.getEndPosition().getRow() & potentialMove.getEndPosition().getColumn() == move.getEndPosition().getColumn() &
-                    potentialMove.getPromotionPiece() == move.getPromotionPiece()) {
+            if (potentialMove.equals(move)) {
                 if (move.getPromotionPiece() != null) {
                     ChessPiece promotedPiece = new ChessPiece(pieceToMove.getTeamColor(), move.getPromotionPiece());
                     board.addPiece(move.getEndPosition(), promotedPiece);
@@ -129,7 +127,7 @@ public class ChessGame {
         }
         ChessPosition kingPosition = getKingPosition(teamColor);
         for (ChessMove move: allPossibleEnemyMoves) {
-            if (move.getEndPosition().getRow() == kingPosition.getRow() & move.getEndPosition().getColumn() == kingPosition.getColumn()) {
+            if (move.getEndPosition().equals(kingPosition)) {
                 return true;
             }
         }
