@@ -62,16 +62,18 @@ public class ChessGame {
         }
         Collection<ChessMove> movesOfPiece = pieceToMove.pieceMoves(board, startPosition);
         List<ChessMove> validMovesOfPiece = new ArrayList<>();
-        for (ChessMove move: movesOfPiece) {
-            ChessBoard newBoard = board.deepCopy();
-            ChessBoard oldBoard = board.deepCopy();
-            newBoard.addPiece(move.getEndPosition(), pieceToMove);
-            newBoard.addPiece(move.getStartPosition(), null);
-            board = newBoard.deepCopy();
-            if (!isInCheck(pieceToMove.getTeamColor())) {
-                validMovesOfPiece.add(move);
+        if (!isInCheck(pieceToMove.getTeamColor())) {
+            for (ChessMove move : movesOfPiece) {
+                ChessBoard newBoard = board.deepCopy();
+                ChessBoard oldBoard = board.deepCopy();
+                newBoard.addPiece(move.getEndPosition(), pieceToMove);
+                newBoard.addPiece(move.getStartPosition(), null);
+                board = newBoard.deepCopy();
+                if (!isInCheck(pieceToMove.getTeamColor())) {
+                    validMovesOfPiece.add(move);
+                }
+                board = oldBoard.deepCopy();
             }
-            board = oldBoard.deepCopy();
         }
         return validMovesOfPiece;
     }
@@ -83,7 +85,28 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
+        if (pieceToMove == null) {
+            throw new InvalidMoveException("There is no piece at that location");
+        }
+        if (pieceToMove.getTeamColor() != player_turn) {
+            throw  new InvalidMoveException("It is not this piece's turn");
+        }
+        Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
+        for (ChessMove potentialMove: possibleMoves) {
+            if (potentialMove == move) {
+                board.addPiece(move.getEndPosition(), pieceToMove);
+                board.addPiece(move.getStartPosition(), null);
+                if (player_turn == TeamColor.WHITE) {
+                    player_turn = TeamColor.BLACK;
+                }
+                else {
+                    player_turn = TeamColor.WHITE;
+                }
+                return;
+            }
+        }
+        throw new InvalidMoveException("That piece cannot make that move");
     }
 
     /**
