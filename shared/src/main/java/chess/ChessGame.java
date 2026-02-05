@@ -57,26 +57,20 @@ public class ChessGame {
             return null;
         }
         ChessPiece pieceToMove = board.getPiece(startPosition);
-        if (pieceToMove.getTeamColor() != player_turn) {
-            return null;
-        }
         Collection<ChessMove> movesOfPiece = pieceToMove.pieceMoves(board, startPosition);
-        if (isInCheck(pieceToMove.getTeamColor())) {
-            List<ChessMove> validMovesOfPiece = new ArrayList<>();
-            for (ChessMove move : movesOfPiece) {
-                ChessBoard newBoard = board.deepCopy();
-                ChessBoard oldBoard = board.deepCopy();
-                newBoard.addPiece(move.getEndPosition(), pieceToMove);
-                newBoard.addPiece(move.getStartPosition(), null);
-                board = newBoard.deepCopy();
-                if (!isInCheck(pieceToMove.getTeamColor())) {
-                    validMovesOfPiece.add(move);
-                }
-                board = oldBoard.deepCopy();
+        List<ChessMove> validMovesOfPiece = new ArrayList<>();
+        for (ChessMove move : movesOfPiece) {
+            ChessBoard newBoard = board.deepCopy();
+            ChessBoard oldBoard = board.deepCopy();
+            newBoard.addPiece(move.getEndPosition(), pieceToMove);
+            newBoard.addPiece(move.getStartPosition(), null);
+            board = newBoard.deepCopy();
+            if (!isInCheck(pieceToMove.getTeamColor())) {
+                validMovesOfPiece.add(move);
             }
-            return validMovesOfPiece;
+            board = oldBoard.deepCopy();
         }
-        return movesOfPiece;
+        return validMovesOfPiece;
     }
 
     /**
