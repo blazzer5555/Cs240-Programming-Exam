@@ -174,23 +174,9 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)) {
-            Collection<ChessMove> allPossibleMoves = getAllPossibleMoves(teamColor);
-            for (ChessMove move : allPossibleMoves) {
-                ChessBoard newBoard = board.deepCopy();
-                ChessBoard oldBoard = board.deepCopy();
-                ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
-                newBoard.addPiece(move.getEndPosition(), pieceToMove);
-                newBoard.addPiece(move.getStartPosition(), null);
-                board = newBoard.deepCopy();
-                if (!isInCheck(pieceToMove.getTeamColor())) {
-                    board = oldBoard.deepCopy();
-                    return false;
-                }
-                board = oldBoard.deepCopy();
-            }
-            return true;
+            return doesNotHaveAnyValidMove(teamColor);
         }
-            return false;
+        return false;
     }
 
     /**
@@ -201,7 +187,28 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return doesNotHaveAnyValidMove(teamColor);
+        }
+        return false;
+    }
+
+    private boolean doesNotHaveAnyValidMove(TeamColor teamColor) {
+        Collection<ChessMove> allPossibleMoves = getAllPossibleMoves(teamColor);
+        for (ChessMove move : allPossibleMoves) {
+            ChessBoard newBoard = board.deepCopy();
+            ChessBoard oldBoard = board.deepCopy();
+            ChessPiece pieceToMove = board.getPiece(move.getStartPosition());
+            newBoard.addPiece(move.getEndPosition(), pieceToMove);
+            newBoard.addPiece(move.getStartPosition(), null);
+            board = newBoard.deepCopy();
+            if (!isInCheck(pieceToMove.getTeamColor())) {
+                board = oldBoard.deepCopy();
+                return false;
+            }
+            board = oldBoard.deepCopy();
+        }
+        return true;
     }
 
     /**
