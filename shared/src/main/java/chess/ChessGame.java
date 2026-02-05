@@ -94,7 +94,9 @@ public class ChessGame {
         }
         Collection<ChessMove> possibleMoves = validMoves(move.getStartPosition());
         for (ChessMove potentialMove: possibleMoves) {
-            if (potentialMove == move) {
+            if (potentialMove.getStartPosition().getRow() == move.getStartPosition().getRow() & potentialMove.getStartPosition().getColumn() == move.getStartPosition().getColumn() &
+                    potentialMove.getEndPosition().getRow() == move.getEndPosition().getRow() & potentialMove.getEndPosition().getColumn() == move.getEndPosition().getColumn() &
+                    potentialMove.getPromotionPiece() == move.getPromotionPiece()) {
                 board.addPiece(move.getEndPosition(), pieceToMove);
                 board.addPiece(move.getStartPosition(), null);
                 if (player_turn == TeamColor.WHITE) {
